@@ -4,6 +4,6 @@ project (space_game)
 link_directories (/usr/local/lib)
 
 add_executable (space_game
-    main.cpp)
+    src/main.cpp)
 
 target_link_libraries (space_game allegro allegro_main allegro_primitives)
