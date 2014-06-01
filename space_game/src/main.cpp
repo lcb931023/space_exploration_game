@@ -1,8 +1,23 @@
 #include <iostream>
+#include <stdlib.h>
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
+#include <perlin/Perlin.h>
+
 const float FPS = 60;
+Perlin p;
+float perlin_z = 0;
+
+void draw_stars () {
+    for (int x = 0; x < 640; x += 2) {
+        for (int y = 0; y < 480; y += 2) {
+            float v = p.noise (x * 0.5, y * 0.5, perlin_z * 0.2);
+            al_draw_filled_circle (x, y, v * 6, al_map_rgb (x * v, y * v, abs (x - y) * v) );
+        }
+    }
+}
 
 int main (int argc, char** argv) {
     ALLEGRO_DISPLAY *display = NULL;
@@ -23,7 +38,7 @@ int main (int argc, char** argv) {
         return -1;
     }
  
-    display = al_create_display (1024, 768);
+    display = al_create_display (640, 480);
     if (!display) {
         std::cout << "failed to create display!" << std::endl;
         al_destroy_timer (timer);
@@ -64,9 +79,10 @@ int main (int argc, char** argv) {
         // redraw if there are no more events
         if (redraw && al_is_event_queue_empty (event_queue) ) {
             redraw = false;
-            al_clear_to_color (al_map_rgb (0,0,0) );
-            al_draw_filled_circle (100, 100, 50, al_map_rgb (255, 255, 255) );
+            draw_stars ();
             al_flip_display ();
+
+            perlin_z += 0.5;
         }
     }
 

@@ -1,9 +1,16 @@
 cmake_minimum_required (VERSION 2.8)
-project (space_game)
+project (SPACE_GAME)
 
-link_directories (/usr/local/lib)
+include_directories ("${SPACE_GAME_SOURCE_DIR}/thirdparty/include"
+    "${SPACE_GAME_SOURCE_DIR}/include")
+
+link_directories ("/usr/local/lib")
 
 add_executable (space_game
     src/main.cpp)
 
-target_link_libraries (space_game allegro allegro_main allegro_primitives)
+target_link_libraries (space_game
+    allegro
+    allegro_main
+    allegro_primitives
+    "${SPACE_GAME_SOURCE_DIR}/thirdparty/lib/perlin.a")
