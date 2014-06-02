@@ -36,6 +36,12 @@
     <ClCompile Include="thirdparty\src\perlin\Perlin.cpp">
       <Filter>Source Files\thirdparty\perlin</Filter>
     </ClCompile>
+    <ClCompile Include="src\game_context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\camera.hpp">

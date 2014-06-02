@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\game_context.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\world.cpp" />
     <ClCompile Include="thirdparty\src\perlin\FractalNoise.cpp" />
     <ClCompile Include="thirdparty\src\perlin\Perlin.cpp" />
   </ItemGroup>

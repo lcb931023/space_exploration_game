@@ -4,7 +4,7 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
-#include <perlin/FractalNoise.h>
+#include <game_context.hpp>
 
 const float FPS = 60;
 
@@ -51,6 +51,9 @@ int main (int argc, char** argv) {
     al_flip_display ();
     al_start_timer (timer);
 
+    // game related initialization
+    space::game_context context (display, event_queue);
+
     while (!done)
     {
         // poll events
@@ -65,10 +68,14 @@ int main (int argc, char** argv) {
             done = true;
         }
 
+        // do logic
+        context.update ();
+
         // redraw if there are no more events
         if (redraw && al_is_event_queue_empty (event_queue) ) {
             redraw = false;
             al_clear_to_color (al_map_rgb (0,0,0) );
+            context.render ();
             al_flip_display ();
         }
     }
