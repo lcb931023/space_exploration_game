@@ -5,7 +5,7 @@
  * Author: Chris Little
  */
 
-#include "Perlin.h"
+#include <perlin/Perlin.h>
 
 #include <cstdlib>
 #include <ctime>

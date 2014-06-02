@@ -10,6 +10,18 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="thirdparty\src\perlin\FractalNoise.cpp" />
+    <ClCompile Include="thirdparty\src\perlin\Perlin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\camera.hpp" />
+    <ClInclude Include="include\game_context.hpp" />
+    <ClInclude Include="include\world.hpp" />
+    <ClInclude Include="thirdparty\include\perlin\FractalNoise.h" />
+    <ClInclude Include="thirdparty\include\perlin\Perlin.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D021025B-55DE-40B1-8F38-466BF9ADD042}</ProjectGuid>
     <RootNamespace>Spacegame</RootNamespace>
@@ -39,7 +51,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\C++\allegro-5.0.10-msvc-11.0\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\C++\allegro-5.0.10-msvc-11.0\include;C:\Users\Grant\Documents\GitHub\space_exploration_game\space_game\include;C:\Users\Grant\Documents\GitHub\space_exploration_game\space_game\thirdparty\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\C++\allegro-5.0.10-msvc-11.0\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -67,9 +79,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

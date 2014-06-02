@@ -1,4 +1,4 @@
-#include "FractalNoise.h"
+#include <perlin/FractalNoise.h>
 
 FractalNoise::FractalNoise() {
 	m_perlinSource = new Perlin();

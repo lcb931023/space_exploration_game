@@ -13,10 +13,45 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\thirdparty">
+      <UniqueIdentifier>{775cbd6f-0302-4dcb-9f70-a2913339b87e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\thirdparty\perlin">
+      <UniqueIdentifier>{12d3d87d-2fd4-4308-b124-3faf6f33a80c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdparty">
+      <UniqueIdentifier>{b44861f5-1887-47d1-8282-5eb6cd44d950}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\thirdparty\perlin">
+      <UniqueIdentifier>{a2ab45ad-1bb0-4296-8940-6852ed821669}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="thirdparty\src\perlin\FractalNoise.cpp">
+      <Filter>Source Files\thirdparty\perlin</Filter>
+    </ClCompile>
+    <ClCompile Include="thirdparty\src\perlin\Perlin.cpp">
+      <Filter>Source Files\thirdparty\perlin</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\camera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game_context.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\world.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\include\perlin\FractalNoise.h">
+      <Filter>Header Files\thirdparty\perlin</Filter>
+    </ClInclude>
+    <ClInclude Include="thirdparty\include\perlin\Perlin.h">
+      <Filter>Header Files\thirdparty\perlin</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

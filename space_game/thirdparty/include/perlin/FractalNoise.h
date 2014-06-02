@@ -11,7 +11,7 @@
 #ifndef _FRACTALNOISE_H_
 #define _FRACTALNOISE_H_
 
- #include "Perlin.h"
+ #include <perlin/Perlin.h>
 
 class FractalNoise {
 public:
