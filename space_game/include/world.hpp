@@ -6,6 +6,7 @@ namespace space {
 
     class world {
     public:
+        void update (game_context& _context);
         void render (game_context& _context);
     };
 }

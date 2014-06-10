@@ -7,15 +7,11 @@
 #include <world.hpp>
 #include <camera.hpp>
 
-/* TODO this whole class is subject to large change... still messing around */
 namespace space {
     class game_context {
     public:
         game_context (ALLEGRO_DISPLAY* _display, ALLEGRO_EVENT_QUEUE* _evqueue);
         ~game_context ();
-
-        void update ();
-        void render ();
 
         ALLEGRO_DISPLAY *display;
         ALLEGRO_EVENT_QUEUE *event_queue;
