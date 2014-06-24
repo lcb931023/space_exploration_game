@@ -5,6 +5,7 @@
 
 namespace space {
     class component;
+    class game_context;
 
     class entity {
     public:

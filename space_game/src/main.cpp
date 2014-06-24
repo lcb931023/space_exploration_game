@@ -69,13 +69,11 @@ int main (int argc, char** argv) {
         }
 
         // do logic
-        context.update ();
 
         // redraw if there are no more events
         if (redraw && al_is_event_queue_empty (event_queue) ) {
             redraw = false;
             al_clear_to_color (al_map_rgb (0,0,0) );
-            context.render ();
             al_flip_display ();
         }
     }

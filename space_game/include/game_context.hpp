@@ -16,8 +16,8 @@ namespace space {
         ALLEGRO_DISPLAY *display;
         ALLEGRO_EVENT_QUEUE *event_queue;
 
-        world world;
-        camera cam;
+        world w;
+        camera c;
     };
 }
 
