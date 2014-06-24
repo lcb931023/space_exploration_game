@@ -172,7 +172,7 @@ int main (int argc, char** argv) {
     al_register_event_source (event_queue, al_get_timer_event_source (timer) );
 
 	makeShip();
-
+	 
     // clear the screen and start the FPS timer
     al_clear_to_color (al_map_rgb (0,0,0) );
 	//drawStars();
