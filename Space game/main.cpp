@@ -6,10 +6,25 @@
 #include <Vec2.h>
 #include <FractalNoise.h>
 #include <Star.h>
+#include <Box2D/Box2D.h>
 
 const float FPS = 60;
+const int PIX_METER = 1;
 FractalNoise p;
 float zPerlin = 0.7;
+
+ALLEGRO_DISPLAY *display = NULL;
+ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+ALLEGRO_TIMER *timer = NULL;
+ALLEGRO_BITMAP *bm_ship = NULL;
+
+// Box2d
+b2Vec2 gravity(0.0f, 0.0f);
+b2World world(gravity);
+float32 timeStep = 1.0f / FPS;
+int32 velocityIterations = 10;
+int32 positionIterations = 10;
+b2Body* ship = NULL;
 
 float fClamp (float pf, float min, float max) {
 	if (pf >= max) pf = max;
@@ -31,7 +46,7 @@ void drawStars () {
 	float x;
 	float y;
 	float r;
-	const int size = 15;
+	const int size = 12;
 	int iP = 1;
 	std::vector<Star> stars(size);
 	// Procedual Position & Radius
@@ -71,16 +86,56 @@ void drawStars () {
 
 }
 /*** Star texture Charts 
-
 Sun's inner texture: setPersistence(0.6), noise(x * 0.2,y * 0.2, z)
 Moon & Mercury: setPersistence(1), noise(x * 0.007,y * 0.008, z)
 Jupiter: setPersistence(0.1), noise(x * 0.002,y * 0.02, z)
 Venus: setPersistence(0.6), noise(x * 0.002,y * 0.02, z), clamp it
 ***/
+
+void makeShip(){
+	// Body Definition
+	b2BodyDef bd;
+	bd.type = b2_dynamicBody;
+	bd.position.Set(400.0f, 300.0f);
+	ship = world.CreateBody(&bd);
+	// Shape Definition
+	b2PolygonShape ps;
+	float d_width = 20.0f;
+	float d_height = 40.0f;
+	ps.SetAsBox(d_width/2,d_height/2);
+	// Fixture Definition
+	b2FixtureDef fd;
+	fd.shape = &ps;
+	fd.density = 1;
+	// Connect fd that has shape and density to the ship body
+	ship->CreateFixture(&fd);
+	// [TEMP] give it some motion
+	ship->SetAngularVelocity(0.8f);
+	// Prepare for rendering
+	bm_ship = al_create_bitmap(d_width*PIX_METER, d_height*PIX_METER);
+	al_set_target_bitmap(bm_ship);
+	al_clear_to_color(al_map_rgb(255, 255, 255));
+	al_set_target_bitmap(al_get_backbuffer(display));
+}
+
+void updateSimulation(){
+	world.Step(timeStep, velocityIterations, positionIterations);
+	world.ClearForces();
+
+	// Draw the ship
+	b2Vec2 s_pos = ship->GetPosition();
+	float32 angle = ship->GetAngle();
+	float s_x = s_pos.x;
+	float s_y = s_pos.y;
+	float midx = al_get_bitmap_width(bm_ship)/2;
+	float midy = al_get_bitmap_height(bm_ship)/2;
+	al_draw_rotated_bitmap(bm_ship, midx, midy, s_x*PIX_METER, s_y*PIX_METER, angle, 0);
+}
+
 int main (int argc, char** argv) {
-    ALLEGRO_DISPLAY *display = NULL;
-    ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-    ALLEGRO_TIMER *timer = NULL;
+	//B2_NOT_USED(argc);
+	//B2_NOT_USED(argv);
+
     bool done = false;
     bool redraw = true;
 
@@ -97,7 +152,7 @@ int main (int argc, char** argv) {
     }
  
     display = al_create_display (800, 600);
-    if (!display) {
+    if (!display) { 
         std::cout << "failed to create display!" << std::endl;
         al_destroy_timer (timer);
         return -1;
@@ -106,6 +161,7 @@ int main (int argc, char** argv) {
     event_queue = al_create_event_queue ();
     if (!event_queue) {
         std::cout << "failed to create event_queue!" << std::endl;
+		al_destroy_bitmap (bm_ship);
         al_destroy_display (display);
         al_destroy_timer (timer);
         return -1;
@@ -115,9 +171,11 @@ int main (int argc, char** argv) {
     al_register_event_source (event_queue, al_get_display_event_source (display) );
     al_register_event_source (event_queue, al_get_timer_event_source (timer) );
 
+	makeShip();
+
     // clear the screen and start the FPS timer
     al_clear_to_color (al_map_rgb (0,0,0) );
-	drawStars();
+	//drawStars();
     al_flip_display ();
     al_start_timer (timer);
 
@@ -138,8 +196,9 @@ int main (int argc, char** argv) {
         // redraw if there are no more events
         if (redraw && al_is_event_queue_empty (event_queue) ) {
             redraw = false;
-            //al_clear_to_color (al_map_rgb (0,0,0) );
-            //drawStars();
+            al_clear_to_color (al_map_rgb (0,0,0) );
+            updateSimulation();
+			//drawStars();
 			//zPerlin += 0.1;
             al_flip_display ();
         }

@@ -39,8 +39,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\C++\allegro-5.0.10-msvc-11.0\include;C:\Users\Changbai\Code\FOSS\space_exploration_game\Space game;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\C++\allegro-5.0.10-msvc-11.0\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\C++\allegro-5.0.10-msvc-11.0\include;C:\Users\Changbai\Code\space_exploration_game\Space game;C:\C++\Box2D;C:;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\C++\allegro-5.0.10-msvc-11.0\lib;C:\C++\Box2D\Build\vs2012\bin\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -50,7 +50,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>allegro-5.0.10-monolith-md-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>allegro-5.0.10-monolith-md-debug.lib;Box2D.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
