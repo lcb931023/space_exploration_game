@@ -121,7 +121,9 @@ void makeShip(){
 void updateSimulation(){
 	world.Step(timeStep, velocityIterations, positionIterations);
 	world.ClearForces();
+}
 
+void renderSimulation(){
 	// Draw the ship
 	b2Vec2 s_pos = ship->GetPosition();
 	float32 angle = ship->GetAngle();
@@ -192,12 +194,12 @@ int main (int argc, char** argv) {
         else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             done = true;
         }
-
+		updateSimulation();
         // redraw if there are no more events
         if (redraw && al_is_event_queue_empty (event_queue) ) {
             redraw = false;
             al_clear_to_color (al_map_rgb (0,0,0) );
-            updateSimulation();
+			renderSimulation();
 			//drawStars();
 			//zPerlin += 0.1;
             al_flip_display ();
