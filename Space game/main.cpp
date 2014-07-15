@@ -25,6 +25,7 @@ float32 timeStep = 1.0f / FPS;
 int32 velocityIterations = 10;
 int32 positionIterations = 10;
 b2Body* ship = NULL;
+b2Body* star = NULL;
 
 float fClamp (float pf, float min, float max) {
 	if (pf >= max) pf = max;
@@ -96,7 +97,7 @@ void makeShip(){
 	// Body Definition
 	b2BodyDef bd;
 	bd.type = b2_dynamicBody;
-	bd.position.Set(400.0f, 300.0f);
+	bd.position.Set(300.0f, 200.0f);
 	ship = world.CreateBody(&bd);
 	// Shape Definition
 	b2PolygonShape ps;
@@ -110,15 +111,44 @@ void makeShip(){
 	// Connect fd that has shape and density to the ship body
 	ship->CreateFixture(&fd);
 	// [TEMP] give it some motion
-	ship->SetAngularVelocity(0.8f);
+	//ship->SetLinearVelocity(b2Vec2(0.0f, 75.0f));
 	// Prepare for rendering
 	bm_ship = al_create_bitmap(d_width*PIX_METER, d_height*PIX_METER);
 	al_set_target_bitmap(bm_ship);
 	al_clear_to_color(al_map_rgb(255, 255, 255));
 	al_set_target_bitmap(al_get_backbuffer(display));
 }
+void makeStar(){
+	// Body Definition
+	b2BodyDef bd;
+	bd.type = b2_staticBody;
+	bd.position.Set(500.0f, 300.0f);
+	star = world.CreateBody(&bd);
+	// Shape Definition
+	b2CircleShape cs;
+	float radius = 40.0f;
+	cs.m_radius = radius;
+	// Fixture Definition
+	b2FixtureDef fd;
+	fd.shape = &cs;
+	// Connect fd that has shape and density to the star body
+	star->CreateFixture(&fd);
+}
+
+void applyGravityToShip(){
+	// F = GMm/R^2
+	b2Vec2 gravityPull = star->GetPosition() - ship->GetPosition();
+	float starMass = 10.0f;
+	float shipMass = 1.0f;
+	float forceMag = starMass * shipMass / ( pow(gravityPull.Length(), 2.0) );
+	gravityPull.Normalize();
+	gravityPull *= forceMag;
+	gravityPull *= 100000000.0f;
+	ship->ApplyForce(gravityPull, star->GetPosition(), true);
+}
 
 void updateSimulation(){
+	applyGravityToShip();
 	world.Step(timeStep, velocityIterations, positionIterations);
 	world.ClearForces();
 }
@@ -132,6 +162,8 @@ void renderSimulation(){
 	float midx = al_get_bitmap_width(bm_ship)/2;
 	float midy = al_get_bitmap_height(bm_ship)/2;
 	al_draw_rotated_bitmap(bm_ship, midx, midy, s_x*PIX_METER, s_y*PIX_METER, angle, 0);
+	// draw star
+	al_draw_filled_circle (star->GetPosition().x, star->GetPosition().y, 40.0f, al_map_rgb (255, 255, 255) );
 }
 
 int main (int argc, char** argv) {
@@ -174,6 +206,7 @@ int main (int argc, char** argv) {
     al_register_event_source (event_queue, al_get_timer_event_source (timer) );
 
 	makeShip();
+	makeStar();
 	 
     // clear the screen and start the FPS timer
     al_clear_to_color (al_map_rgb (0,0,0) );
