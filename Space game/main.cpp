@@ -25,14 +25,14 @@ float32 timeStep = 1.0f / FPS;
 int32 velocityIterations = 10;
 int32 positionIterations = 10;
 b2Body* ship = NULL;
-b2Body* star = NULL;
+Star* star = NULL;
 
 float fClamp (float pf, float min, float max) {
 	if (pf >= max) pf = max;
 	if (pf <= min) pf = min;
 	return pf;
 }
-
+/*
 bool starTooClose(Star s1, Star s2) {
 	float passageW = 10;
 	float dist = (s1.p - s2.p).magnitude(); 
@@ -54,11 +54,10 @@ void drawStars () {
 	p.setPersistence(1);
 	for (int i=0; i<size; i++, iP++)
 	{
-		Star tStar;
 		r = 30 + 20 * fClamp(p.noise(iP * 0.036, iP * 0.063, (iP+1) * 0.086), -1, 1);
 		x =	400 + 400 * fClamp(p.noise(iP * 0.03, iP * 0.05, (iP+1) * 0.02), -1, 1);
 		y =	300 + 300 * fClamp(p.noise(iP * 0.05, iP * 0.03, (iP+1) * 0.06), -1, 1);
-		tStar.init(r, x, y);
+		Star tStar(r, x, y);
 		stars[i] = tStar;
 		for (int j=0; j<i; j++)
 		{
@@ -73,8 +72,16 @@ void drawStars () {
 	{
 		al_draw_filled_circle (stars[i].p.x(), stars[i].p.y(), stars[i].r, al_map_rgb (255, 255, 255) );
 	}
-	// Procedual Texture
-	/*
+}
+*/
+/*** Star texture Charts 
+Sun's inner texture: setPersistence(0.6), noise(x * 0.2,y * 0.2, z)
+Moon & Mercury: setPersistence(1), noise(x * 0.007,y * 0.008, z)
+Jupiter: setPersistence(0.1), noise(x * 0.002,y * 0.02, z)
+Venus: setPersistence(0.6), noise(x * 0.002,y * 0.02, z), clamp it
+
+// Procedual Texture
+	
 	p.setPersistence(.6);
 	for (int i = 0; i<800; i++ ){
 		for (int j = 0; j<600; j++){
@@ -83,21 +90,14 @@ void drawStars () {
 			al_draw_filled_circle(i + 2, j + 2, 1, al_map_rgb(n, n, n));
 		}
 	}
-	*/
 
-}
-/*** Star texture Charts 
-Sun's inner texture: setPersistence(0.6), noise(x * 0.2,y * 0.2, z)
-Moon & Mercury: setPersistence(1), noise(x * 0.007,y * 0.008, z)
-Jupiter: setPersistence(0.1), noise(x * 0.002,y * 0.02, z)
-Venus: setPersistence(0.6), noise(x * 0.002,y * 0.02, z), clamp it
 ***/
 
 void makeShip(){
 	// Body Definition
 	b2BodyDef bd;
 	bd.type = b2_dynamicBody;
-	bd.position.Set(300.0f, 200.0f);
+	bd.position.Set(300.0f, 250.0f);
 	ship = world.CreateBody(&bd);
 	// Shape Definition
 	b2PolygonShape ps;
@@ -111,7 +111,7 @@ void makeShip(){
 	// Connect fd that has shape and density to the ship body
 	ship->CreateFixture(&fd);
 	// [TEMP] give it some motion
-	//ship->SetLinearVelocity(b2Vec2(0.0f, 75.0f));
+	ship->SetLinearVelocity(b2Vec2(75.0f, -50.0f));
 	// Prepare for rendering
 	bm_ship = al_create_bitmap(d_width*PIX_METER, d_height*PIX_METER);
 	al_set_target_bitmap(bm_ship);
@@ -119,32 +119,19 @@ void makeShip(){
 	al_set_target_bitmap(al_get_backbuffer(display));
 }
 void makeStar(){
-	// Body Definition
-	b2BodyDef bd;
-	bd.type = b2_staticBody;
-	bd.position.Set(500.0f, 300.0f);
-	star = world.CreateBody(&bd);
-	// Shape Definition
-	b2CircleShape cs;
-	float radius = 40.0f;
-	cs.m_radius = radius;
-	// Fixture Definition
-	b2FixtureDef fd;
-	fd.shape = &cs;
-	// Connect fd that has shape and density to the star body
-	star->CreateFixture(&fd);
+	star = new Star(world, 40.0f, 500.0f, 300.0f, 20.0f);
 }
 
 void applyGravityToShip(){
 	// F = GMm/R^2
-	b2Vec2 gravityPull = star->GetPosition() - ship->GetPosition();
+	b2Vec2 gravityPull = star->b2Body->GetPosition() - ship->GetPosition();
 	float starMass = 10.0f;
 	float shipMass = 1.0f;
 	float forceMag = starMass * shipMass / ( pow(gravityPull.Length(), 2.0) );
 	gravityPull.Normalize();
 	gravityPull *= forceMag;
 	gravityPull *= 100000000.0f;
-	ship->ApplyForce(gravityPull, star->GetPosition(), true);
+	ship->ApplyForce(gravityPull, star->b2Body->GetPosition(), true);
 }
 
 void updateSimulation(){
@@ -163,7 +150,7 @@ void renderSimulation(){
 	float midy = al_get_bitmap_height(bm_ship)/2;
 	al_draw_rotated_bitmap(bm_ship, midx, midy, s_x*PIX_METER, s_y*PIX_METER, angle, 0);
 	// draw star
-	al_draw_filled_circle (star->GetPosition().x, star->GetPosition().y, 40.0f, al_map_rgb (255, 255, 255) );
+	al_draw_filled_circle (star->b2Body->GetPosition().x, star->b2Body->GetPosition().y, 40.0f, al_map_rgb (255, 255, 255) );
 }
 
 int main (int argc, char** argv) {
