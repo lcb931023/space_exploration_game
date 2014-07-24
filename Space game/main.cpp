@@ -111,7 +111,7 @@ void makeShip(){
 	// Connect fd that has shape and density to the ship body
 	ship->CreateFixture(&fd);
 	// [TEMP] give it some motion
-	ship->SetLinearVelocity(b2Vec2(75.0f, -50.0f));
+	//ship->SetLinearVelocity(b2Vec2(75.0f, -50.0f));
 	// Prepare for rendering
 	bm_ship = al_create_bitmap(d_width*PIX_METER, d_height*PIX_METER);
 	al_set_target_bitmap(bm_ship);
@@ -122,6 +122,11 @@ void makeStar(){
 	star = new Star(world, 40.0f, 500.0f, 300.0f, 20.0f);
 }
 
+void moveShip() {
+	// move ship
+
+}
+
 void applyGravityToShip(){
 	// F = GMm/R^2
 	b2Vec2 gravityPull = star->b2Body->GetPosition() - ship->GetPosition();
@@ -130,17 +135,19 @@ void applyGravityToShip(){
 	float forceMag = starMass * shipMass / ( pow(gravityPull.Length(), 2.0) );
 	gravityPull.Normalize();
 	gravityPull *= forceMag;
-	gravityPull *= 100000000.0f;
+	gravityPull *= 50000000.0f;
 	ship->ApplyForce(gravityPull, star->b2Body->GetPosition(), true);
 }
 
 void updateSimulation(){
+	moveShip();
 	applyGravityToShip();
 	world.Step(timeStep, velocityIterations, positionIterations);
 	world.ClearForces();
 }
 
 void renderSimulation(){
+	// [TODO] Camera Integreation
 	// Draw the ship
 	b2Vec2 s_pos = ship->GetPosition();
 	float32 angle = ship->GetAngle();
@@ -153,6 +160,56 @@ void renderSimulation(){
 	al_draw_filled_circle (star->b2Body->GetPosition().x, star->b2Body->GetPosition().y, 40.0f, al_map_rgb (255, 255, 255) );
 }
 
+void handleKeyDown(int pKeyCode) {
+	switch (pKeyCode) {
+        case ALLEGRO_KEY_W:
+            // Up
+			ship->ApplyForce(b2Vec2(0.0f, -1000000.0f), ship->GetPosition(), true);
+            break;
+        case ALLEGRO_KEY_S:
+            // Down
+			ship->ApplyForce(b2Vec2(0.0f, 1000000.0f), ship->GetPosition(), true);
+            break;
+        case ALLEGRO_KEY_A:
+            // Left
+			ship->ApplyForce(b2Vec2(-1000000.0f, 0.0f), ship->GetPosition(), true);
+            break;
+        case ALLEGRO_KEY_D:
+            // Right
+			ship->ApplyForce(b2Vec2(1000000.0f, 0.0f), ship->GetPosition(), true);
+            break;
+        case ALLEGRO_KEY_Q:
+            // Rot L
+            break;
+        case ALLEGRO_KEY_E:
+            // Rot R
+            break;
+    }
+}
+
+void handleKeyUp(int pKeyCode) {
+	switch (pKeyCode) {
+		case ALLEGRO_KEY_W:
+			// reset U/D
+			break;
+		case ALLEGRO_KEY_S:
+			// reset U/D
+			break;
+		case ALLEGRO_KEY_A:
+			// reset L/R
+			break;
+		case ALLEGRO_KEY_D:
+			// reset L/R
+			break;
+		case ALLEGRO_KEY_Q:
+			// reset rot
+			break;
+		case ALLEGRO_KEY_E:
+			// reset rot
+			break;
+	}
+}
+
 int main (int argc, char** argv) {
 	//B2_NOT_USED(argc);
 	//B2_NOT_USED(argv);
@@ -161,7 +218,7 @@ int main (int argc, char** argv) {
     bool redraw = true;
 
     // initialize all allegro systems
-    if (!al_init () || !al_init_primitives_addon () ) {
+    if (!al_init () || !al_init_primitives_addon () || !al_install_keyboard () ) {
         std::cout << "failed to initialize allegro!" << std::endl;
         return -1;
     }
@@ -191,6 +248,7 @@ int main (int argc, char** argv) {
     // register event sources for events to come from
     al_register_event_source (event_queue, al_get_display_event_source (display) );
     al_register_event_source (event_queue, al_get_timer_event_source (timer) );
+	al_register_event_source (event_queue, al_get_keyboard_event_source () );
 
 	makeShip();
 	makeStar();
@@ -214,6 +272,12 @@ int main (int argc, char** argv) {
         else if (ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             done = true;
         }
+		else if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
+			handleKeyDown(ev.keyboard.keycode);
+		}
+		else if (ev.type == ALLEGRO_EVENT_KEY_UP) {
+			handleKeyUp(ev.keyboard.keycode);
+		}
 		updateSimulation();
         // redraw if there are no more events
         if (redraw && al_is_event_queue_empty (event_queue) ) {
